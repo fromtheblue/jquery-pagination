@@ -1,0 +1,85 @@
+.pagination-container{
+    margin: 15px;
+    border: 1px solid #ddd;
+    padding: 6px 15px;
+    font-size: 14px;
+}
+.pagination-container,.pagination-container li a,.pagination-container .custom-page,.pagination-container .go{
+    color: #a1a1a1;
+}
+.pagination-container li a:hover,.pagination-container .go:hover{
+    color: #919191;
+    cursor: pointer;
+}
+.pagination-container li a:active,.pagination-container .go:active{
+    color: #818181;
+    background-color:#ddd;
+}
+.pagination-msg-panel{
+    padding:3px 0;
+    display: inline-block;
+    vertical-align: middle;
+}
+.pagination-container::after{
+    content: "";
+    display: table;
+    clear: both;
+}
+.pagination-operate-panel{
+    float: right;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.pagination-container li a,.pagination-container .custom-page,.pagination-container .go{
+    padding: 2px 8px;
+}
+.pagination-container *{
+    vertical-align:middle;
+}
+.pagination-container nav{
+    display: inline-block;
+}
+.pagination-container .pagination{
+    margin: 0;
+}
+.pagination-container li{
+    display: inline-block;
+    vertical-align: top;
+}
+.pagination-container li a.active{
+    background-color: #0d90e2;
+    color: white;
+}
+.pagination-container li a.active:hover{
+    background-color: #0080e2;
+}
+.pagination-container li a.active:active{
+    background-color: #0070e2;
+}
+.pagination-container label{
+    margin:0 4px;
+    font-weight: normal;
+}
+.custom-page{
+    padding-left: 0;
+    padding-right: 3px;
+    text-align: center;
+    width: 3em;
+    height: inherit;
+    display: inline-block;
+    font-size: inherit;
+}
+.custom-page-danger{
+    border-color:red!important;
+}
+.pagination-container .go{
+    height: inherit;
+    font-size: inherit;
+}
+.pagination-container .disabled{
+    cursor: not-allowed!important;
+    opacity: .6!important;
+    background-color:white !important;
+}

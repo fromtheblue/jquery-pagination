@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>jquery-pagination</title>
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <style>
+        .pagination-container{
+            border: 1px solid #ddd;
+            padding: 6px 15px;
+        }
+        .pagination-container,.pagination-container li a,.pagination-container .custom-page,.pagination-container .go{
+            color: #a1a1a1;
+        }
+        .pagination-container li a:hover,.pagination-container .go:hover{
+            color: #919191;
+            cursor: pointer;
+        }
+        .pagination-container li a:active,.pagination-container .go:active{
+            color: #818181;
+            background-color:#ddd;
+        }
+        .pagination-msg-panel{
+            padding:3px 0;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .pagination-container::after{
+            content: "";
+            display: table;
+            clear: both;
+        }
+        .pagination-operate-panel{
+            float: right;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        .pagination-container{
+            font-size: 12px;
+        }
+        .pagination-container li a,.pagination-container .custom-page,.pagination-container .go{
+            padding: 2px 8px;
+        }
+        .pagination-container *{
+            vertical-align:middle;
+        }
+        .pagination-container nav{
+            display: inline-block;
+        }
+        .pagination-container .pagination{
+            margin: 0;
+        }
+        .pagination-container li{
+            display: inline-block;
+            vertical-align: top;
+        }
+        .pagination-container li a.active{
+            background-color: #0d90e2;
+            color: white;
+        }
+        .pagination-container li a.active:hover{
+            background-color: #0080e2;
+        }
+        .pagination-container li a.active:active{
+            background-color: #0070e2;
+        }
+        .pagination-container label{
+            margin-bottom: 0;
+            font-weight: normal;
+        }
+        .custom-page{
+            width: 3em;
+            height: inherit;
+            display: inline-block;
+            font-size: inherit;
+        }
+        .pagination-container .go{
+            height: inherit;
+            font-size: inherit;
+        }
+        .pagination-container .disabled{
+            cursor: not-allowed!important;
+            opacity: .6!important;
+            background-color:white !important;
+        }
+    </style>
+</head>
+<body>
+<img src="1.png" alt="" style="height: 100px;color: red;">
+<div id="pagination" class="pagination-container">
+    <!--<div class="pagination-msg-panel">
+        当前第
+        <span class="current-page">1/50</span>
+        页,每页
+        <span class="per-page">12</span>
+        条,共
+        <span class="total-record">500</span>
+        条记录
+    </div>
+    <div class="pagination-operate-panel">
+        <nav>
+            <ul class="pagination">
+                <li><a><span>首页</span></a></li>
+                <li><a><span>上一页</span></a></li>
+                <li><a class="active">1</a></li>
+                <li><a>2</a></li>
+                <li><a>3</a></li>
+                <li><a>4</a></li>
+                <li><a>5</a></li>
+                <li><a><span>下一页</span></a></li>
+                <li><a><span>尾页</span></a></li>
+            </ul>
+        </nav>
+        <label>
+            <span>跳转:</span>
+            <input type="text" class="form-control custom-page">
+            <span>页</span>
+        </label>
+        <a class="btn btn-default go">确定</a>
+    </div>-->
+</div>
+<script src="jquery-1.12.4.min.js"></script>
+<script src="bootstrap/js/bootstrap.min.js"></script>
+<script>
+    (function($){
+        if($.fn.pagination){
+            return;
+        }
+        var setMethods={
+            save:save
+        };
+        var getMethods={
+            getName:getName
+        }
+        $.fn.pagination=function( ){
+            var args=arguments,params,method;
+            if(!args.length|| typeof args[0] == 'object'){
+                return this.each(function(idx){
+                    var $self=$(this);
+                    $self.data('pagination',$.extend(true,{},$.fn.pagination.default,args[0]));
+                    params=$self.data('pagination');
+                    _init.call( $self,params);
+                    _render.call($self);
+                });
+            }else{
+                if(!$(this).data('pagination')){
+                    throw new Error('You has not init pagination!');
+                }
+                params=Array.prototype.slice.call(args,1);
+                if (setMethods.hasOwnProperty(args[0])){
+                    method=setMethods[args[0]];
+                    return this.each(function(idx){
+                        var $self=$(this);
+                        method.apply($self,params);
+                        _render.call($self);
+                    });
+                }else if(getMethods.hasOwnProperty(args[0])){
+                    method=getMethods[args[0]];
+                    return method.apply(this,params);
+                }else{
+                    throw new Error('There is no such method');
+                }
+            }
+        }
+        $.fn.pagination.default={
+            firstPage:"首页",
+            lastPage:"尾页",
+            prevPage:"上一页",
+            nextPage:"下一页",
+            total:0,
+            currentPage:0,
+            preCount:12,
+            showMsg:true,
+            showMsgRender:function(currentPage,preCount,total,totalPage){
+                return "当前第"+(currentPage+1)+"/"+totalPage+"页,每页"+preCount+"条,共"+total+"条记录";
+            }
+        }
+        function _init(params){
+            return this;
+        }
+        function save(name){
+            $.extend($(this).data('func'),{name:name});
+            return this;
+        }
+        function _render(){
+            var params=this.data("pagination");
+            params.totalPage=Math.ceil(params.total/params.preCount);
+            this.addClass("pagination-container").html([
+                function(){
+                    if(params.showMsg){
+                        return $("<div/>",{
+                            "class":"pagination-msg-panel",
+                            "html":params.showMsgRender(params.currentPage,params.preCount,params.total,params.totalPage)
+                        })
+                    }
+                }(),
+                $("<div/>",{
+                    "class":"pagination-operate-panel"
+                }).append(
+                    $("<nav/>").append(
+                        $("<ul/>",{
+                            "class":"pagination"
+                        }).append(
+                            function(){
+                                var currentPage=params.currentPage,
+                                        totalPage=params.totalPage,
+                                        showPageCount=params.showPageCount,
+                                        i,
+                                        arr=[];
+                                var firstShow=currentPage-Math.ceil((showPageCount-1-Math.ceil(showPageCount%2))/2);
+                                var lastShow=currentPage+Math.floor((showPageCount-1+Math.ceil(showPageCount%2))/2);
+                                if(firstShow<0){
+                                    firstShow=0;
+                                    lastShow=showPageCount-1;
+                                }
+                                if(lastShow>totalPage-1){
+                                    lastShow=totalPage-1;
+                                    firstShow=lastShow-showPageCount+1;
+                                }
+                                if(firstShow<0){
+                                    firstShow=0;
+                                }
+                                /*
+                                 <div class="pagination-operate-panel">
+                                 <nav>
+                                 <ul class="pagination">
+                                 <li><a><span>首页</span></a></li>
+                                 <li><a><span>上一页</span></a></li>
+                                 <li><a class="active">1</a></li>
+                                 <li><a>2</a></li>
+                                 <li><a>3</a></li>
+                                 <li><a>4</a></li>
+                                 <li><a>5</a></li>
+                                 <li><a><span>下一页</span></a></li>
+                                 <li><a><span>尾页</span></a></li>
+                                 </ul>
+                                 </nav>
+                                 <label>
+                                 <span>跳转:</span>
+                                 <input type="text" class="form-control custom-page">
+                                 <span>页</span>
+                                 </label>
+                                 <a class="btn btn-default go">确定</a>
+                                 </div>*/
+                                for(i=firstShow;i<=lastShow;i++){
+                                    arr.push(
+                                        $("<li/>").append(
+                                            $("<a/>",{
+                                                "text":(i+1),
+                                                "class":function(){
+                                                    if(i==currentPage){
+                                                        return "active";
+                                                    }
+                                                }
+                                            })
+                                        )
+                                    )
+                                }
+                                arr.unshift(
+                                    $("<li/>").append(
+                                        $("<a/>",{
+                                            "text":params.prevPage,
+                                            "class":function(){
+                                                if(!currentPage){
+                                                    return "disabled";
+                                                }
+                                            },
+                                            "click":function(){
+                                                if(!currentPage){
+                                                    return;
+                                                }
+                                            }
+                                        })
+                                    )
+                                )
+                                arr.unshift(
+                                    $("<li/>").append(
+                                        $("<a/>",{
+                                            "text":params.firstPage,
+                                            "class":function(){
+                                                if(!currentPage){
+                                                    return "disabled";
+                                                }
+                                            },
+                                            "click":function(){
+                                                if(!currentPage){
+                                                    return;
+                                                }
+                                            }
+                                        })
+                                    )
+                                )
+                                arr.push(
+                                    $("<li/>").append(
+                                        $("<a/>",{
+                                            "text":params.nextPage,
+                                            "class":function(){
+                                                if(currentPage==totalPage-1){
+                                                    return "disabled";
+                                                }
+                                            },
+                                            "click":function(){
+                                                if(currentPage==totalPage-1){
+                                                    return;
+                                                }
+                                                alert("aaa");
+                                            }
+                                        })
+                                    )
+                                )
+                                arr.push(
+                                    $("<li/>").append(
+                                        $("<a/>",{
+                                            "text":params.lastPage,
+                                            "class":function(){
+                                                if(currentPage==totalPage-1){
+                                                    return "disabled";
+                                                }
+                                            },
+                                            "click":function(){
+                                                if(currentPage==totalPage-1){
+                                                    return;
+                                                }
+                                                alert("aaa");
+                                            }
+                                        })
+                                    )
+                                )
+                                return arr;
+                            }()
+                        )
+                    )
+                )
+            ]);
+        }
+        function getName(params){
+            console.info(params);
+            return this.data('func').name;
+        }
+    })(jQuery);
+    $("#pagination").pagination({
+        firstPage:"first",
+        lastPage:"end",
+        prevPage:"prev",
+        nextPage:"next",
+        showPageCount:5,
+        total:30,
+        currentPage:2,
+        preCount:10,
+        showMsg:true
+    });
+</script>
+</body>
+</html>

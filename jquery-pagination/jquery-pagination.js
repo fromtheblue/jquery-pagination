@@ -83,7 +83,7 @@
         $.extend(this.data('pagination'),option);
     }
     function _render(){
-        var params=this.data("pagination");
+        var $self=this,params=$self.data("pagination");
         params.totalPage=Math.ceil(params.total/params.preCount);
         this.addClass("pagination-container").html([
             function(){
@@ -132,7 +132,7 @@
                                                     }
                                                 },
                                                 "click":function(){
-                                                    params.click(i);
+                                                    params.click.call($self,i);
                                                 }
                                             })
                                         )
@@ -239,7 +239,7 @@
                             var isCorrect=!(isNaN(this.value)||this.value<0||this.value>params.totalPage);
                             $(this).toggleClass("custom-page-danger",!isCorrect);
                             if(keyCode==13&&isCorrect&&this.value&&this.value.trim()!==""){
-                                params.click(this.value-1);
+                                params.click.call($self,this.value-1);
                             }
                         }
                     }

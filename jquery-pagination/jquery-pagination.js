@@ -152,7 +152,7 @@
                                             if(!currentPage){
                                                 return;
                                             }
-                                            params.click(currentPage-1);
+                                            params.click.call($self,currentPage-1);
                                         }
                                     })
                                 )
@@ -170,7 +170,7 @@
                                             if(!currentPage){
                                                 return;
                                             }
-                                            params.click(0);
+                                            params.click.call($self,0);
                                         }
                                     })
                                 )
@@ -188,7 +188,7 @@
                                             if(currentPage==totalPage-1){
                                                 return;
                                             }
-                                            params.click(currentPage+1);
+                                            params.click.call($self,currentPage+1);
                                         }
                                     })
                                 )
@@ -206,7 +206,7 @@
                                             if(currentPage==totalPage-1){
                                                 return;
                                             }
-                                            params.click(totalPage-1);
+                                            params.click.call($self,totalPage-1);
                                         }
                                     })
                                 )

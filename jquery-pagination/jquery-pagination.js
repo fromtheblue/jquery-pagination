@@ -236,7 +236,7 @@
                                 }
                             })];
                         function _enter(keyCode){
-                            var isCorrect=!(isNaN(this.value)||this.value<0||this.value>params.totalPage);
+                            var isCorrect=!(isNaN(this.value)||this.value<=0||this.value>params.totalPage);
                             $(this).toggleClass("custom-page-danger",!isCorrect);
                             if(keyCode==13&&isCorrect&&this.value&&this.value.trim()!==""){
                                 params.click.call($self,this.value-1);

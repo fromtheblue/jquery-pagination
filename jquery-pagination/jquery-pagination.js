@@ -218,6 +218,13 @@
                 function(){
                     var customPage;
                     if(params.showCustomPage){
+                        var btn = $("<button/>",{
+                            "class":"btn btn-default go disabled",
+                            "text":"确定",
+                            "click":function(){
+                                _enter.call(customPage.get(0),13);
+                            }
+                        });
                         return [$("<label/>").append(
                             document.createTextNode("跳转: "),
                             (customPage=$("<input/>",{
@@ -228,18 +235,13 @@
                             })),
                             document.createTextNode(" 页")
                         ),
-                            $("<a/>",{
-                                "class":"btn btn-default go",
-                                "text":"确定",
-                                "click":function(){
-                                    _enter.call(customPage.get(0),13);
-                                }
-                            })];
+                          btn ];
                         function _enter(keyCode){
-                            var isCorrect=!(isNaN(this.value)||this.value<=0||this.value>params.totalPage);
+                            var isCorrect=/^\d+$/.test(this.value)&&this.value>0&&this.value<=params.totalPage;
                             $(this).toggleClass("custom-page-danger",!isCorrect);
-                            if(keyCode==13&&isCorrect&&this.value&&this.value.trim()!==""){
-                                params.click.call($self,this.value-1);
+                            $(btn).toggleClass("disabled",!isCorrect);
+                            if(keyCode==13&&isCorrect){
+                                params.click(this.value-1);
                             }
                         }
                     }

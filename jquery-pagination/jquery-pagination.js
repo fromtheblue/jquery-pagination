@@ -85,6 +85,9 @@
     function _render(){
         var $self=this,params=$self.data("pagination");
         params.totalPage=Math.ceil(params.total/params.preCount);
+        if(params.totalPage==0){
+            params.totalPage = 1;
+        }
         this.addClass("pagination-container").html([
             function(){
                 if(params.showMsg){
